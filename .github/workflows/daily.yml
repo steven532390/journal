@@ -1,0 +1,19 @@
+name: daily
+on:
+  schedule:
+    - cron: "0 22 * * *"   # 05:00 WIB
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo "$(date -u '+%F %T') heartbeat" >> journal.log
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email "${{ github.repository_owner }}@users.noreply.github.com"
+          git add journal.log
+          git commit -m "journal update"
+          git push
